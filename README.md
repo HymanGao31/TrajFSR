@@ -18,7 +18,7 @@ past xy (6-d: abs / rel / vel)
 
 Train-time smooth is off. Test scripts always sweep noise `0,0.1,...,0.5` twice: `smooth=-1` then `smooth=2`.
 
-ETH/UCY Group C uses `LAM_ID=0.5` and `FSR_SCALE=0.5` so the Gumbel mask does not saturate at 1. NBA Group C stays `0.5 / 1.0`.
+ETH/UCY Group C uses `LAM_ID=0` and `FSR_SCALE=0.2` so the Gumbel mask does not saturate at 1.
 
 ## Scripts (`scripts/fsr/`)
 
@@ -54,9 +54,10 @@ python main.py --dataset eth --log default --use_sampler --epoch 47
 ```text
 /root/autodl-tmp/nmrfFSR/
   {subset}_nmrf_eth_noiseB_ntr0.1/{subset}_ckpt_best.pth
-  {subset}_nmrf_eth_fsrC_FSR_fsc0.5_ntr0.1/{subset}_ckpt_best.pth
+  {subset}_nmrf_eth_fsrC_FSR_OnB_FSR_id0_fsc0.2_ntr0.1/{subset}_ckpt_best.pth
+  sdd_nmrf_sdd_fsrC_onB_FSR_frz_mb2_fsc0.2_ntr0.1/sdd_ckpt_best.pth
   nba_nmrf_nba_noiseB_ntr0.1/nba_ckpt_best.pth
-  nba_nmrf_nba_fsrC_FSR_ntr0.1/nba_ckpt_best.pth
+  nba_nmrf_nba_fsrC_onB_FSR_frz_id0_mb2_fsc0.2_ntr0.1/nba_ckpt_best.pth
   jrdb_nmrf_jrdb_noiseB_ntr0.1/jrdb_ckpt_best.pth
   jrdb_nmrf_jrdb_fsrC_onB_FSR_fsc0.2_ntr0.1/jrdb_ckpt_best.pth
 
@@ -81,14 +82,14 @@ Empty `CKPT=` in a test script uses the default path for that `GROUP`. ETH/UCY B
 
 
 GROUP=C SUBSET=eth bash scripts/fsr/eth_train.sh
-GROUP=B SUBSET=hotel GPU=0 EPOCHS=60 bash scripts/fsr/eth_train.sh
+GROUP=B SUBSET=hotel GPU=0 EPOCHS=100 bash scripts/fsr/eth_train.sh
 
 
 GROUP=B SUBSET=eth bash scripts/fsr/eth_test.sh
 GROUP=C SUBSET=eth bash scripts/fsr/eth_test.sh
 GROUP=A SUBSET=eth bash scripts/fsr/eth_test.sh
 
-GROUP=C GPU=0 EPOCHS=50 bash scripts/fsr/nba_train.sh
+GROUP=C GPU=0 EPOCHS=100 bash scripts/fsr/nba_train.sh
 
 GROUP=B bash scripts/fsr/nba_test.sh
 GROUP=C bash scripts/fsr/nba_test.sh
@@ -96,7 +97,7 @@ GROUP=C bash scripts/fsr/nba_test.sh
 
 # Group A
 python main.py --dataset sdd --train --log default
-python main.py --dataset sdd --train --log default --use_sampler --epoch 80
+python main.py --dataset sdd --train --log default --use_sampler --epoch 100
 #  B → C
 FSR_GROUP=B bash scripts/fsr/sdd_train.sh
 FSR_GROUP=C FREEZE=1 MASK_BAL=2 bash scripts/fsr/sdd_train.sh
